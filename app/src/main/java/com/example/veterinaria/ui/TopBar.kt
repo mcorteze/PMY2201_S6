@@ -1,11 +1,12 @@
 package com.example.veterinaria.ui
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Pets
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Pets
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,10 +26,10 @@ fun TopBar(onNavigateTo: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
 
     TopAppBar(
-        title = { Text("Veterinaria Animales Fantásticos") },
+        title = { Text("Veterinaria App") },
         actions = {
             IconButton(onClick = { expanded = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = "Menú")
+                Icon(Icons.Default.Menu, contentDescription = "Menú")
             }
             DropdownMenu(
                 expanded = expanded,
@@ -36,35 +37,28 @@ fun TopBar(onNavigateTo: (String) -> Unit) {
             ) {
                 DropdownMenuItem(
                     text = { Text("Inicio") },
-                    onClick = {
-                        expanded = false
-                        onNavigateTo("home")
-                    },
+                    onClick = { expanded = false; onNavigateTo("home") },
                     leadingIcon = { Icon(Icons.Default.Home, contentDescription = null) }
                 )
                 DropdownMenuItem(
                     text = { Text("Mascotas") },
-                    onClick = {
-                        expanded = false
-                        onNavigateTo("mascotas")
-                    },
+                    onClick = { expanded = false; onNavigateTo("mascotas") },
                     leadingIcon = { Icon(Icons.Default.Pets, contentDescription = null) }
                 )
                 DropdownMenuItem(
                     text = { Text("Dueños") },
-                    onClick = {
-                        expanded = false
-                        onNavigateTo("duenos")
-                    },
+                    onClick = { expanded = false; onNavigateTo("duenos") },
+                    leadingIcon = { Icon(Icons.Default.People, contentDescription = null) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Veterinarios") },
+                    onClick = { expanded = false; onNavigateTo("veterinarios") },
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
                 )
                 DropdownMenuItem(
-                    text = { Text("Consultas") },
-                    onClick = {
-                        expanded = false
-                        onNavigateTo("consultas")
-                    },
-                    leadingIcon = { Icon(Icons.Default.MedicalServices, contentDescription = null) }
+                    text = { Text("Agenda") },
+                    onClick = { expanded = false; onNavigateTo("agenda") },
+                    leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) }
                 )
             }
         }
