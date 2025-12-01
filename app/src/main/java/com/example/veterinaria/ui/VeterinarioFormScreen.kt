@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +36,8 @@ fun VeterinarioFormScreen(viewModel: MainViewModel, navController: NavController
     val veterinario = if (isEditing) viewModel.veterinarios.value.find { it.id == veterinarioId } else null
 
     var nombre by remember { mutableStateOf(veterinario?.nombre ?: "") }
-    var especialidad by remember { mutableStateOf(veterinario?.especialidad ?: "") }
+    var especialidad by remember { mutableStateOf(veterinario?.especialidad ?: viewModel.especialidades.first()) }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -59,12 +63,36 @@ fun VeterinarioFormScreen(viewModel: MainViewModel, navController: NavController
                 label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = especialidad,
-                onValueChange = { especialidad = it },
-                label = { Text("Especialidad") },
-                modifier = Modifier.fillMaxWidth()
-            )
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            ) {
+                OutlinedTextField(
+                    value = especialidad,
+                    onValueChange = {},
+                    label = { Text("Especialidad") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    viewModel.especialidades.forEach { selectedEspecialidad ->
+                        DropdownMenuItem(
+                            text = { Text(selectedEspecialidad) },
+                            onClick = {
+                                especialidad = selectedEspecialidad
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
             Button(
                 onClick = {
                     val veterinarioToSave = Veterinario(

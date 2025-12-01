@@ -21,6 +21,7 @@ class MainViewModel : ViewModel() {
     private val _loadingMessage = MutableStateFlow("")
     val loadingMessage: StateFlow<String> = _loadingMessage.asStateFlow()
 
+    // --- Listas de datos ---
     private val _mascotas = MutableStateFlow<List<Mascota>>(emptyList())
     val mascotas: StateFlow<List<Mascota>> = _mascotas.asStateFlow()
 
@@ -32,6 +33,10 @@ class MainViewModel : ViewModel() {
 
     private val _veterinarios = MutableStateFlow<List<Veterinario>>(emptyList())
     val veterinarios: StateFlow<List<Veterinario>> = _veterinarios.asStateFlow()
+
+    // --- Listas para Dropdowns ---
+    val especies = listOf("Perro", "Gato", "Pájaro", "Reptil", "Otro")
+    val especialidades = listOf("Cardiología", "Dermatología", "General", "Cirugía", "Neurología")
 
     init {
         cargarDatosIniciales()

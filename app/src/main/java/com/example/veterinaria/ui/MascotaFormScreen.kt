@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,9 +36,10 @@ fun MascotaFormScreen(viewModel: MainViewModel, navController: NavController, ma
     val mascota = if (isEditing) viewModel.mascotas.value.find { it.id == mascotaId } else null
 
     var nombre by remember { mutableStateOf(mascota?.nombre ?: "") }
-    var especie by remember { mutableStateOf(mascota?.especie ?: "") }
+    var especie by remember { mutableStateOf(mascota?.especie ?: viewModel.especies.first()) }
     var edad by remember { mutableStateOf(mascota?.edad?.toString() ?: "") }
     var peso by remember { mutableStateOf(mascota?.peso?.toString() ?: "") }
+    var expanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -61,23 +65,47 @@ fun MascotaFormScreen(viewModel: MainViewModel, navController: NavController, ma
                 label = { Text("Nombre") },
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = especie,
-                onValueChange = { especie = it },
-                label = { Text("Especie") },
-                modifier = Modifier.fillMaxWidth()
-            )
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+            ) {
+                OutlinedTextField(
+                    value = especie,
+                    onValueChange = {},
+                    label = { Text("Especie") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    viewModel.especies.forEach { selectedEspecie ->
+                        DropdownMenuItem(
+                            text = { Text(selectedEspecie) },
+                            onClick = {
+                                especie = selectedEspecie
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = edad,
                 onValueChange = { edad = it },
                 label = { Text("Edad") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             OutlinedTextField(
                 value = peso,
                 onValueChange = { peso = it },
                 label = { Text("Peso") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             Button(
                 onClick = {
