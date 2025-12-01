@@ -48,20 +48,18 @@ class MainViewModel : ViewModel() {
             _loadingMessage.value = "Cargando datos del sistema..."
             delay(2000)
 
-            _duenos.value = listOf(
-                Dueño("1-1", "Juan Pérez", "+56 9 1234 5678", "juan@email.com"),
-                Dueño("2-2", "María López", "+56 9 8765 4321", "maria@email.com")
-            )
+            val dueno1 = Dueño("1-1", "Juan Pérez", "+56 9 1234 5678", "juan@email.com")
+            val dueno2 = Dueño("2-2", "María López", "+56 9 8765 4321", "maria@email.com")
+            _duenos.value = listOf(dueno1, dueno2)
 
-            _mascotas.value = listOf(
-                Mascota(1, "Firulais", "Perro", 5, 12.5),
-                Mascota(2, "Michi", "Gato", 3, 4.0),
-                Mascota(3, "Rex", "Perro", 2, 8.0)
-            )
+            val mascota1 = Mascota(1, dueno1.id, "Firulais", "Perro", 5, 12.5)
+            val mascota2 = Mascota(2, dueno1.id, "Michi", "Gato", 3, 4.0)
+            val mascota3 = Mascota(3, dueno2.id, "Rex", "Perro", 2, 8.0)
+            _mascotas.value = listOf(mascota1, mascota2, mascota3)
 
             _consultas.value = listOf(
-                Consulta(1, "Vacunación", 15000.0, 1, LocalDate.now().minusDays(2)),
-                Consulta(2, "Revisión General", 20000.0, 1, LocalDate.now())
+                Consulta(1, mascota1.id, dueno1.id, "Vacunación", 15000.0, LocalDate.now().minusDays(2)),
+                Consulta(2, mascota2.id, dueno1.id, "Revisión General", 20000.0, LocalDate.now())
             )
 
             _veterinarios.value = listOf(
@@ -71,6 +69,15 @@ class MainViewModel : ViewModel() {
 
             _isLoading.value = false
         }
+    }
+
+    // ========== Búsquedas ==========
+    fun getMascotaById(id: Int): Mascota? {
+        return _mascotas.value.find { it.id == id }
+    }
+
+    fun getDuenoById(id: String): Dueño? {
+        return _duenos.value.find { it.id == id }
     }
 
     // ========== Mascotas ==========
@@ -103,6 +110,10 @@ class MainViewModel : ViewModel() {
             _mascotas.value = _mascotas.value.filter { it.id != mascota.id }
             _isLoading.value = false
         }
+    }
+
+    fun getMascotasByDueno(duenoId: String): List<Mascota> {
+        return _mascotas.value.filter { it.duenoId == duenoId }
     }
 
     // ========== Dueños ==========

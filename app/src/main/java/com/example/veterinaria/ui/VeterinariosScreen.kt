@@ -84,7 +84,7 @@ fun VeterinarioCard(veterinario: Veterinario, onEdit: (Veterinario) -> Unit, onD
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                Icons.Default.Person, // Podríamos usar otro ícono, como "MedicalServices"
+                Icons.Default.Person,
                 contentDescription = "Veterinario Icon",
                 modifier = Modifier.size(40.dp).padding(end = 8.dp),
                 tint = MaterialTheme.colorScheme.primary

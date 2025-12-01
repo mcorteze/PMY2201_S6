@@ -1,6 +1,7 @@
 package com.example.veterinaria.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -56,9 +57,14 @@ fun TopBar(onNavigateTo: (String) -> Unit) {
                     leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) }
                 )
                 DropdownMenuItem(
-                    text = { Text("Agenda") },
+                    text = { Text("Agendar") },
                     onClick = { expanded = false; onNavigateTo("agenda") },
                     leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) }
+                )
+                DropdownMenuItem(
+                    text = { Text("Calendario") },
+                    onClick = { expanded = false; onNavigateTo("calendario") },
+                    leadingIcon = { Icon(Icons.Default.CalendarToday, contentDescription = null) }
                 )
             }
         }

@@ -11,7 +11,10 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,15 +40,17 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConsultaFormScreen(viewModel: MainViewModel, navController: NavController, consultaId: Int?) {
+fun ConsultaFormScreen(viewModel: MainViewModel, navController: NavController, consultaId: Int?, duenoId: String) {
     val isEditing = consultaId != null
     val consulta = if (isEditing) viewModel.consultas.value.find { it.id == consultaId } else null
+    val mascotasDelDueno = viewModel.getMascotasByDueno(duenoId)
 
+    var mascotaId by remember { mutableStateOf(consulta?.mascotaId ?: mascotasDelDueno.firstOrNull()?.id ?: 0) }
     var descripcion by remember { mutableStateOf(consulta?.descripcion ?: "") }
     var costoBase by remember { mutableStateOf(consulta?.costoBase?.toString() ?: "") }
-    var cantidadMascotas by remember { mutableStateOf(consulta?.cantidadMascotas?.toString() ?: "") }
     var fecha by remember { mutableStateOf(consulta?.fecha ?: LocalDate.now()) }
     var showDatePicker by remember { mutableStateOf(false) }
+    var expandedMascota by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -65,22 +70,46 @@ fun ConsultaFormScreen(viewModel: MainViewModel, navController: NavController, c
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
+            // Dropdown para Mascota
+            ExposedDropdownMenuBox(
+                expanded = expandedMascota,
+                onExpandedChange = { expandedMascota = !expandedMascota },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                OutlinedTextField(
+                    value = mascotasDelDueno.find { it.id == mascotaId }?.nombre ?: "",
+                    onValueChange = {},
+                    label = { Text("Mascota") },
+                    readOnly = true,
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedMascota) },
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedMascota,
+                    onDismissRequest = { expandedMascota = false }
+                ) {
+                    mascotasDelDueno.forEach { selectedMascota ->
+                        DropdownMenuItem(
+                            text = { Text(selectedMascota.nombre) },
+                            onClick = {
+                                mascotaId = selectedMascota.id
+                                expandedMascota = false
+                            }
+                        )
+                    }
+                }
+            }
+
             OutlinedTextField(
                 value = descripcion,
                 onValueChange = { descripcion = it },
                 label = { Text("Descripción") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             OutlinedTextField(
                 value = costoBase,
                 onValueChange = { costoBase = it },
                 label = { Text("Costo Base") },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-            )
-            OutlinedTextField(
-                value = cantidadMascotas,
-                onValueChange = { cantidadMascotas = it },
-                label = { Text("Cantidad de Mascotas") },
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
             )
             OutlinedTextField(
@@ -126,9 +155,10 @@ fun ConsultaFormScreen(viewModel: MainViewModel, navController: NavController, c
                 onClick = {
                     val consultaToSave = Consulta(
                         id = consultaId ?: 0,
+                        mascotaId = mascotaId,
+                        duenoId = duenoId,
                         descripcion = descripcion,
                         costoBase = costoBase.toDoubleOrNull() ?: 0.0,
-                        cantidadMascotas = cantidadMascotas.toIntOrNull() ?: 0,
                         fecha = fecha
                     )
                     if (isEditing) {
@@ -136,7 +166,7 @@ fun ConsultaFormScreen(viewModel: MainViewModel, navController: NavController, c
                     } else {
                         viewModel.addConsulta(consultaToSave)
                     }
-                    navController.popBackStack()
+                    navController.navigate("agenda") { popUpTo("home") }
                 },
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
             ) {

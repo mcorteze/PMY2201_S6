@@ -28,7 +28,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.veterinaria.ui.AgendaScreen
+import com.example.veterinaria.ui.AgendaSelectionScreen
+import com.example.veterinaria.ui.CalendarioScreen
 import com.example.veterinaria.ui.ConsultaFormScreen
 import com.example.veterinaria.ui.DuenoFormScreen
 import com.example.veterinaria.ui.DuenosScreen
@@ -87,14 +88,19 @@ fun VeterinariaApp() {
                 composable("mascotas") { MascotasScreen(viewModel, navController) }
                 composable("duenos") { DuenosScreen(viewModel, navController) }
                 composable("veterinarios") { VeterinariosScreen(viewModel, navController) }
-                composable("agenda") { AgendaScreen(viewModel, navController) }
+                composable("agenda") { AgendaSelectionScreen(viewModel, navController) }
+                composable("calendario") { CalendarioScreen(viewModel) }
 
                 composable(
-                    "mascotaForm/{mascotaId}",
-                    arguments = listOf(navArgument("mascotaId") { type = NavType.IntType })
+                    "mascotaForm/{mascotaId}?duenoId={duenoId}",
+                    arguments = listOf(
+                        navArgument("mascotaId") { type = NavType.IntType },
+                        navArgument("duenoId") { type = NavType.StringType; nullable = true }
+                    )
                 ) { backStackEntry ->
                     val mascotaId = backStackEntry.arguments?.getInt("mascotaId")
-                    MascotaFormScreen(viewModel, navController, if (mascotaId == 0) null else mascotaId)
+                    val duenoId = backStackEntry.arguments?.getString("duenoId")
+                    MascotaFormScreen(viewModel, navController, if (mascotaId == 0) null else mascotaId, duenoId)
                 }
                 composable(
                     "duenoForm/{duenoId}",
@@ -111,11 +117,15 @@ fun VeterinariaApp() {
                     VeterinarioFormScreen(viewModel, navController, if (veterinarioId == 0) null else veterinarioId)
                 }
                 composable(
-                    "consultaForm/{consultaId}",
-                    arguments = listOf(navArgument("consultaId") { type = NavType.IntType })
+                    "consultaForm/{consultaId}?duenoId={duenoId}",
+                    arguments = listOf(
+                        navArgument("consultaId") { type = NavType.IntType },
+                        navArgument("duenoId") { type = NavType.StringType }
+                    )
                 ) { backStackEntry ->
                     val consultaId = backStackEntry.arguments?.getInt("consultaId")
-                    ConsultaFormScreen(viewModel, navController, if (consultaId == 0) null else consultaId)
+                    val duenoId = backStackEntry.arguments?.getString("duenoId")!!
+                    ConsultaFormScreen(viewModel, navController, if (consultaId == 0) null else consultaId, duenoId)
                 }
             }
 

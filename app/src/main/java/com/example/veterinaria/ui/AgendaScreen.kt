@@ -4,11 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,13 +21,8 @@ import com.example.veterinaria.viewmodel.MainViewModel
 fun AgendaScreen(viewModel: MainViewModel, navController: NavController) {
     val consultas by viewModel.consultas.collectAsState()
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("consultaForm/0") }) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar Consulta")
-            }
-        }
-    ) { paddingValues ->
+    Scaffold {
+ paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,12 +35,7 @@ fun AgendaScreen(viewModel: MainViewModel, navController: NavController) {
             items(consultas) { consulta ->
                 ConsultaCard(
                     consulta = consulta,
-                    onEdit = {
-                        navController.navigate("consultaForm/${consulta.id}")
-                    },
-                    onDelete = {
-                        viewModel.deleteConsulta(consulta)
-                    }
+                    viewModel = viewModel
                 )
             }
         }
